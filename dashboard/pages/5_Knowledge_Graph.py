@@ -1,15 +1,21 @@
 import streamlit as st
 
-st.title(
-    "🕸 Knowledge Graph"
+st.title("🕸 Vehicle Knowledge Graph")
+
+st.success(
+    "Neo4j Connected Successfully"
 )
 
-st.info(
-    """
-    Neo4j Graph Connected
+st.markdown("""
+### Graph Relationships
 
-    Vehicle → Fault
+Vehicle → Fault
 
-    Root Cause Analysis Enabled
-    """
-)
+Vehicle → Maintenance
+
+Vehicle → Weather
+
+Vehicle → Sensor
+
+Root Cause Analysis Enabled
+""")

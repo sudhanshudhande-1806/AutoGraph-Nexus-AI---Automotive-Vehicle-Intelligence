@@ -2,35 +2,70 @@ import streamlit as st
 
 st.set_page_config(
     page_title="AutoGraph Nexus AI",
-    layout="wide"
+    page_icon="🚗",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
+st.markdown(
+    """
+    <style>
 
-st.title(
-    "🚗 AutoGraph Nexus AI"
+    .main {
+        background-color:#050816;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
 )
+st.title("🚗 AutoGraph Nexus AI")
 
 st.subheader(
-    "Next Generation Vehicle Intelligence Platform"
+    "Connected Vehicle Intelligence Platform"
 )
 
 st.markdown("---")
 
-st.write(
+c1, c2, c3, c4 = st.columns(4)
+
+with c1:
+    st.metric(
+        "Vehicles",
+        "10"
+    )
+
+with c2:
+    st.metric(
+        "Critical",
+        "3"
+    )
+
+with c3:
+    st.metric(
+        "Fault Events",
+        "6"
+    )
+
+with c4:
+    st.metric(
+        "Avg Health",
+        "61"
+    )
+
+st.markdown("---")
+
+st.info(
     """
-    Welcome to AutoGraph Nexus AI
+    Fleet Intelligence Platform
 
-    Features:
+    • Real-Time Telemetry
 
-    • Fleet Health Monitoring
+    • Fault Analytics
 
-    • Fault Intelligence
+    • AI Copilot
 
-    • AI Incident Explorer
+    • Knowledge Graph
 
-    • Knowledge Graph Analytics
-
-    • Maintenance Prioritization
-
-    • Executive Insights
+    • Predictive Maintenance
     """
 )

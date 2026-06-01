@@ -11,6 +11,8 @@ critical = df[
     df["risk_level"] == "HIGH"
 ]
 
-st.dataframe(
-    critical
+critical = critical.sort_values(
+    by="health_score"
 )
+
+st.dataframe(critical)
