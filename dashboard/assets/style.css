@@ -1,0 +1,35 @@
+.stApp {
+
+background:
+linear-gradient(
+-45deg,
+#050816,
+#0b1020,
+#10192f,
+#050816
+);
+
+background-size:
+400% 400%;
+
+animation:
+gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+
+0% {
+background-position:
+0% 50%;
+}
+
+50% {
+background-position:
+100% 50%;
+}
+
+100% {
+background-position:
+0% 50%;
+}
+}

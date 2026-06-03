@@ -1,30 +1,43 @@
 import streamlit as st
 
-def render_kpis(
-    fleet,
-    critical,
-    faults,
-    health
+
+def kpi_card(
+    title,
+    value,
+    icon,
+    color="#3b82f6"
 ):
 
-    c1,c2,c3,c4 = st.columns(4)
+    st.markdown(
+        f"""
+        <div style="
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:20px;
+            padding:25px;
+            backdrop-filter:blur(20px);
+            box-shadow:0px 0px 25px {color};
+            min-height:140px;
+        ">
 
-    c1.metric(
-        "Fleet",
-        fleet
-    )
+            <h4 style="
+                color:white;
+                margin-bottom:15px;
+                font-size:22px;
+            ">
+                {icon} {title}
+            </h4>
 
-    c2.metric(
-        "Critical",
-        critical
-    )
+            <h1 style="
+                color:white;
+                margin:0;
+                font-size:48px;
+                font-weight:700;
+            ">
+                {value}
+            </h1>
 
-    c3.metric(
-        "Faults",
-        faults
-    )
-
-    c4.metric(
-        "Avg Health",
-        health
+        </div>
+        """,
+        unsafe_allow_html=True
     )

@@ -1,29 +1,34 @@
 import streamlit as st
 
+
 def render_sidebar():
 
-    st.sidebar.title(
-        "🚗 AutoGraph Nexus AI"
-    )
+    with st.sidebar:
 
-    st.sidebar.success(
-        "Fleet Command Center"
-    )
+        st.markdown(
+            """
+            # 🚗 AutoGraph Nexus AI
+            """
+        )
 
-    st.sidebar.markdown("---")
+        st.success(
+            "Fleet Command Center"
+        )
 
-    st.sidebar.info(
-        """
-        Connected Vehicle Platform
+        st.markdown("---")
 
-        • Fleet Health
+        st.info(
+            """
+            Connected Vehicle Platform
 
-        • Fault Analytics
+            • Fleet Health
 
-        • AI Copilot
+            • Fault Analytics
 
-        • Knowledge Graph
+            • AI Copilot
 
-        • Maintenance Queue
-        """
-    )
+            • Knowledge Graph
+
+            • Predictive Maintenance
+            """
+        )
