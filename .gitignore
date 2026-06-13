@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
 # Virtual Environment
 .venv/
@@ -12,15 +13,27 @@ venv/
 
 # Logs
 *.log
+logs/
 
 # Data
 data/
 
 # Spark
 checkpoints/
+spark/checkpoints/
+spark/output/
+*.checkpoint/
 
 # Airflow
 airflow/logs/
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/*.pid
 
 # Environment
 .env
+
+# Model and notebook artifacts
+*.pkl
+*.joblib
+.ipynb_checkpoints/

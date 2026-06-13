@@ -8,7 +8,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.absolute()
 DATA_DIR = PROJECT_ROOT / "data"
 LOGS_DIR = PROJECT_ROOT / "logs"
-MODELS_DIR = PROJECT_ROOT / "src" / "ml" / "models"
+MODELS_DIR = PROJECT_ROOT / "ml" / "models"
 
 # Backend Configuration
 BACKEND_HOST = os.getenv("BACKEND_HOST", "127.0.0.1")
@@ -26,11 +26,26 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
 
 # Kafka Configuration
 KAFKA_BROKER = os.getenv("KAFKA_BROKER", "localhost:9092")
-KAFKA_TOPIC_TELEMETRY = "vehicle-telemetry"
-KAFKA_TOPIC_EVENTS = "vehicle-events"
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", KAFKA_BROKER)
+KAFKA_TOPIC_TELEMETRY = os.getenv("KAFKA_TOPIC_TELEMETRY", "vehicle-telemetry")
+KAFKA_TOPIC_EVENTS = os.getenv("KAFKA_TOPIC_EVENTS", "vehicle-events")
+
+# Spark Module 10 Configuration
+SPARK_CONFIG_PATH = os.getenv(
+    "SPARK_CONFIG_PATH",
+    str(PROJECT_ROOT / "spark" / "configs" / "spark_config.yaml"),
+)
+BRONZE_PATH = os.getenv(
+    "BRONZE_PATH",
+    str(DATA_DIR / "lakehouse" / "bronze" / "vehicle_telemetry"),
+)
+SILVER_PATH = os.getenv(
+    "SILVER_PATH",
+    str(DATA_DIR / "lakehouse" / "silver" / "vehicle_telemetry"),
+)
 
 # Airflow Configuration
-AIRFLOW_HOME = os.getenv("AIRFLOW_HOME", str(PROJECT_ROOT / "data_pipeline" / "airflow"))
+AIRFLOW_HOME = os.getenv("AIRFLOW_HOME", str(PROJECT_ROOT / "airflow"))
 
 # Feature Flags
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"

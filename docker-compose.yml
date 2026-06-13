@@ -1,31 +1,94 @@
 services:
-
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
-    container_name: zookeeper
-
+    container_name: autograph-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
-
+    container_name: autograph-kafka
     depends_on:
       - zookeeper
-
     ports:
       - "9092:9092"
-
     environment:
-
       KAFKA_BROKER_ID: 1
-
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: autograph-kafka-init
+    depends_on:
+      - kafka
+    command:
+      - bash
+      - -c
+      - >
+        cub kafka-ready -b kafka:29092 1 30 &&
+        kafka-topics --bootstrap-server kafka:29092
+        --create --if-not-exists
+        --topic vehicle-telemetry
+        --partitions 3
+        --replication-factor 1
+
+  spark-bronze:
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
+    container_name: autograph-spark-bronze
+    profiles:
+      - streaming
+    depends_on:
+      - kafka-init
+    environment:
+      APP_ENV: docker
+      SPARK_MASTER: local[*]
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_TELEMETRY: vehicle-telemetry
+      BRONZE_PATH: /app/data/lakehouse/bronze/vehicle_telemetry
+      BRONZE_CHECKPOINT: /app/data/checkpoints/spark/bronze_vehicle_telemetry
+      SPARK_LOG_LEVEL: WARN
+    volumes:
+      - ./data:/app/data
+    command:
+      - python
+      - -m
+      - spark.jobs.bronze_streaming_job
+      - --config
+      - spark/configs/spark_config.yaml
+
+  spark-silver:
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
+    container_name: autograph-spark-silver
+    profiles:
+      - streaming
+    depends_on:
+      - spark-bronze
+    environment:
+      APP_ENV: docker
+      SPARK_MASTER: local[*]
+      BRONZE_PATH: /app/data/lakehouse/bronze/vehicle_telemetry
+      SILVER_PATH: /app/data/lakehouse/silver/vehicle_telemetry
+      SILVER_CHECKPOINT: /app/data/checkpoints/spark/silver_vehicle_telemetry
+      SPARK_LOG_LEVEL: WARN
+    volumes:
+      - ./data:/app/data
+    command:
+      - python
+      - -m
+      - spark.jobs.silver_streaming_job
+      - --config
+      - spark/configs/spark_config.yaml

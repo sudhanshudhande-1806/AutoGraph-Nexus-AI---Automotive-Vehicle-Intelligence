@@ -1,0 +1,62 @@
+app:
+  name: AutoGraphNexusModule10
+  environment: ${APP_ENV:local}
+
+spark:
+  master: ${SPARK_MASTER:local[*]}
+  log_level: ${SPARK_LOG_LEVEL:WARN}
+  shuffle_partitions: ${SPARK_SHUFFLE_PARTITIONS:4}
+  timezone: ${SPARK_SQL_TIMEZONE:UTC}
+  kafka_package: ${SPARK_KAFKA_PACKAGE:org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1}
+  extra_conf:
+    spark.sql.streaming.stopGracefullyOnShutdown: "true"
+    spark.sql.adaptive.enabled: "true"
+    spark.sql.parquet.compression.codec: snappy
+
+kafka:
+  bootstrap_servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  telemetry_topic: ${KAFKA_TOPIC_TELEMETRY:vehicle-telemetry}
+  starting_offsets: ${KAFKA_STARTING_OFFSETS:earliest}
+  fail_on_data_loss: ${KAFKA_FAIL_ON_DATA_LOSS:false}
+
+storage:
+  bronze_path: ${BRONZE_PATH:data/lakehouse/bronze/vehicle_telemetry}
+  silver_path: ${SILVER_PATH:data/lakehouse/silver/vehicle_telemetry}
+  bronze_checkpoint: ${BRONZE_CHECKPOINT:data/checkpoints/spark/bronze_vehicle_telemetry}
+  silver_checkpoint: ${SILVER_CHECKPOINT:data/checkpoints/spark/silver_vehicle_telemetry}
+  compression: snappy
+
+streaming:
+  trigger_processing_time: ${SPARK_TRIGGER_PROCESSING_TIME:10 seconds}
+  watermark_delay: ${SPARK_WATERMARK_DELAY:10 minutes}
+  output_mode: append
+
+data_quality:
+  required_columns:
+    - vehicle_id
+    - event_timestamp
+    - speed
+    - engine_temp
+    - battery_level
+    - latitude
+    - longitude
+  valid_fault_codes:
+    - NONE
+    - P0420
+    - P0300
+    - P0171
+    - P0455
+    - P0128
+  min_speed: 0
+  max_speed: 250
+  min_rpm: 0
+  max_rpm: 9000
+  min_engine_temp: 40
+  max_engine_temp: 160
+  min_battery_level: 0
+  max_battery_level: 100
+  min_latitude: -90
+  max_latitude: 90
+  min_longitude: -180
+  max_longitude: 180
+
